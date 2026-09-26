@@ -1,4 +1,0 @@
-Flask
-Flask-socketI0
-eventlet
-gunicorn
