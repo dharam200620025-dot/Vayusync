@@ -1,7 +1,7 @@
 ﻿from flask import Flask, render_template
 from flask_socketio import SocketIO, join_room, leave_room, emit
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
 app.config['SECRET_KEY'] = 'vayu_sync_super_secret'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
