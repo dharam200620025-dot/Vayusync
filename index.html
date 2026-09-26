@@ -1,0 +1,388 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vayu Sync - GenZ Edition</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* --- Core Gen-Z Aesthetics --- */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+body { background-color: #0d0d12; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; color: #fff; }
+
+.bg-mesh {
+    position: absolute; width: 100vw; height: 100vh;
+    background: radial-gradient(circle at 15% 50%, rgba(99, 56, 246, 0.4), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(255, 60, 131, 0.3), transparent 25%);
+    filter: blur(80px); z-index: -1; animation: pulse 10s infinite alternate;
+}
+@keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+
+/* Screen Management */
+.screen { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease, transform 0.5s ease; }
+.hidden { opacity: 0; pointer-events: none; transform: scale(0.95); z-index: -10; }
+.active { opacity: 1; transform: scale(1); z-index: 10; }
+
+/* 1. Splash Screen */
+.logo-container { text-align: center; }
+.brand-title { font-size: 60px; font-weight: 900; letter-spacing: -2px; margin-top: 10px; }
+.dot { color: #ff3c83; text-shadow: 0 0 15px #ff3c83; }
+.tagline { color: rgba(255,255,255,0.6); font-size: 16px; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px; }
+.vayu-wave { animation: floatWave 2s infinite ease-in-out; }
+@keyframes floatWave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* Glass Containers (Login & Room) */
+.glass-container {
+    width: 90%; max-width: 400px; padding: 40px;
+    background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px;
+    flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+.step-title { text-align: center; font-size: 24px; margin-bottom: 30px; }
+
+/* Avatar Grid */
+.avatar-grid { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; }
+.avatar-option { width: 60px; height: 60px; border-radius: 16px; cursor: pointer; border: 2px solid transparent; transition: 0.3s; opacity: 0.6; }
+.avatar-option:hover { opacity: 1; transform: translateY(-5px); }
+.avatar-option.selected { border-color: #00ff88; opacity: 1; box-shadow: 0 0 15px rgba(0, 255, 136, 0.4); transform: scale(1.1); }
+
+/* Inputs & Buttons */
+.input-group input { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 15px 20px; border-radius: 15px; color: white; font-size: 16px; outline: none; margin-bottom: 20px; text-align: center; }
+.input-group input:focus { border-color: #6338f6; }
+.primary-btn { width: 100%; background: linear-gradient(135deg, #6338f6, #9d4edd); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+.primary-btn:hover { box-shadow: 0 5px 20px rgba(99, 56, 246, 0.4); transform: translateY(-2px); }
+.secondary-btn { width: 100%; background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+.secondary-btn:hover { background: rgba(255,255,255,0.05); }
+
+.divider { text-align: center; margin: 20px 0; position: relative; }
+.divider span { background: #13111c; padding: 0 10px; font-size: 12px; color: rgba(255,255,255,0.4); position: relative; z-index: 1; }
+.divider::before { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: rgba(255,255,255,0.1); }
+
+.user-preview { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 15px; }
+.avatar-small { width: 40px; height: 40px; border-radius: 12px; }
+
+/* 4. Chat App Styling (From previous code) */
+.glass-app { width: 90%; max-width: 1100px; height: 85vh; background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; display: flex; overflow: hidden; }
+.sidebar { width: 320px; background: rgba(0, 0, 0, 0.2); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; }
+.brand { padding: 24px; display: flex; justify-content: space-between; align-items: center; }
+.brand h2 { font-size: 28px; font-weight: 700; }
+.room-badge { background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 10px; font-size: 12px; color: #00ff88; }
+.sidebar-heading { font-size: 12px; color: rgba(255,255,255,0.4); padding: 0 16px 10px; text-transform: uppercase; }
+.chat-list { flex: 1; overflow-y: auto; padding: 10px; }
+.chat-item { display: flex; align-items: center; padding: 12px 16px; border-radius: 16px; margin-bottom: 8px; cursor: pointer; }
+.chat-item.active { background: rgba(255,255,255,0.05); }
+.avatar-wrapper { position: relative; margin-right: 16px; }
+.avatar { width: 45px; height: 45px; border-radius: 14px; }
+.status-ring { position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; background: #00ff88; border-radius: 50%; border: 3px solid #1a1a24; }
+.chat-container { flex: 1; display: flex; flex-direction: column; }
+.chat-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.vayu-btn { background: linear-gradient(135deg, #6338f6, #ff3c83); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; }
+.messages-area { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+.system-msg { text-align: center; font-size: 12px; color: rgba(255,255,255,0.4); margin: 10px 0; }
+.message { display: flex; flex-direction: column; max-width: 70%; animation: slideUp 0.3s ease forwards; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.received { align-self: flex-start; }
+.sent { align-self: flex-end; }
+.bubble { padding: 12px 18px; font-size: 15px; border-radius: 20px; }
+.received .bubble { background: rgba(255,255,255,0.08); border-radius: 20px 20px 20px 4px; }
+.sent .bubble { background: linear-gradient(135deg, #6338f6, #9d4edd); border-radius: 20px 20px 4px 20px; }
+.time { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+.sent .time { text-align: right; }
+.input-area { padding: 20px 24px; }
+.input-wrapper { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; display: flex; align-items: center; padding: 6px 10px; }
+.icon-btn { background: none; border: none; font-size: 20px; padding: 8px; cursor: pointer; }
+.input-wrapper input { flex: 1; background: transparent; border: none; color: white; padding: 10px 15px; outline: none; }
+.send-btn { background: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; }
+.send-btn:hover { background: #ff3c83; color: white; }
+</style>
+</head>
+<body>
+    <div class="bg-mesh"></div>
+
+    <!-- 1. SPLASH SCREEN -->
+    <div id="splash-screen" class="screen active">
+        <div class="logo-container splash-anim">
+            <svg class="vayu-wave" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#6338f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12h4l3-9 5 18 3-9h5"/>
+            </svg>
+            <h1 class="brand-title">Vayu<span class="dot">.</span></h1>
+            <p> class="tagline">Syncing your world...</p>
+            <p style="position: absolute; bottom: 40px; left: 0; right: 0; front-size: 13; colour: rgba(255,255,255,0.4);letter-spacing: 1px;">
+                 Designed & Built by <span style="colour: #00ff88; font-weight: 600;">Dharmendra</span>
+ </p>
+        </div>
+    </div>
+
+    <!-- 2. LOGIN / AVATAR SCREEN -->
+    <div id="login-screen" class="screen hidden glass-container">
+        <h2 class="step-title">Choose your vibe ✨</h2>
+        
+        <div class="avatar-grid" id="avatarGrid">
+            <img src="https://api.dicebear.com/7.x/micah/svg?seed=Felix&backgroundColor=b6e3f4" class="avatar-option selected" data-avatar="Felix" onclick="selectAvatar(this)">
+            <img src="https://api.dicebear.com/7.x/micah/svg?seed=Aneka&backgroundColor=ffdfbf" class="avatar-option" data-avatar="Aneka" onclick="selectAvatar(this)">
+            <img src="https://api.dicebear.com/7.x/micah/svg?seed=Milo&backgroundColor=c0aede" class="avatar-option" data-avatar="Milo" onclick="selectAvatar(this)">
+            <img src="https://api.dicebear.com/7.x/micah/svg?seed=Jude&backgroundColor=ffcce6" class="avatar-option" data-avatar="Jude" onclick="selectAvatar(this)">
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="usernameInput" placeholder="Enter your nickname..." autocomplete="off">
+        </div>
+        <button class="primary-btn" onclick="goToRoom()">Continue 🚀</button>
+    </div>
+
+    <!-- 3. ROOM SELECTION SCREEN -->
+    <div id="room-screen" class="screen hidden glass-container">
+        <h2 class="step-title">Join the squad 🔥</h2>
+        <div class="user-preview">
+            <img id="previewAvatar" src="" class="avatar-small">
+            <span id="previewName">Name</span>
+        </div>
+
+        <div class="room-actions">
+            <div class="input-group">
+                <input type="text" id="roomCodeInput" placeholder="Enter 4-digit Room Code" maxlength="4">
+            </div>
+            <button class="primary-btn" onclick="enterChat('join')">Join Room</button>
+            
+            <div class="divider"><span>OR</span></div>
+            
+            <button class="secondary-btn" onclick="enterChat('create')">Create New Room ⚡</button>
+        </div>
+    </div>
+
+    <!-- 4. MAIN CHAT SCREEN (From previous design, wrapped in a screen) -->
+    <div id="chat-screen" class="screen hidden glass-app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <h2>Vayu<span class="dot">.</span></h2>
+                <span class="room-badge" id="currentRoomDisplay">Room: 0000</span>
+            </div>
+            <div class="chat-list">
+                <h4 class="sidebar-heading">Online in Room</h4>
+</div>
+<div style="padding: 15x; text-align: center; front-size: 11px; color: rgba(255,255,255,0.3); border-top: 1px solid rgba(255,255,255,0.05); margin-top: auto;">
+created with by <b style="color: #ff3c83; letter-spacing: 0.5px;">Dharmendra</b>
+</div>
+                <!-- Active User (You) -->
+                <div class="chat-item active">
+                    <div class="avatar-wrapper">
+                        <img id="myChatAvatar" src="" alt="Me" class="avatar">
+                        <span class="status-ring"></span>
+                    </div>
+                    <div class="chat-info">
+                        <h3 id="myChatName">My Name (You)</h3>
+                        <p>Online</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-container">
+            <header class="chat-header">
+                <div class="user-info">
+                    <h2>Global Room 🔥</h2>
+                    <span class="status-text">Encrypted & Real-time</span>
+                </div>
+                <div class="actions">
+                    <button class="vayu-btn"onclick="openVayuDrop()">☁️ Drop File</button>
+                </div>
+            </header>
+
+            <div class="messages-area" id="chatBox">
+                <div class="system-msg">Welcome to Vayu Sync! 🎉</div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <button class="icon-btn">😊</button>
+                    <input type="text" id="messageInput" placeholder="Type a message...">
+                    <button class="icon-btn">📎</button>
+                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
+    <script>const socket = io(); // Socket connect karein
+
+let userData = {
+    name: "",
+    avatarUrl: "https://api.dicebear.com/7.x/micah/svg?seed=Felix&backgroundColor=b6e3f4",
+    roomCode: ""
+};
+
+// --- Step 1&2: Splash aur Avatar Selection purane wale hi rahenge ---
+setTimeout(() =>{
+    document.getElementById('splash-screen').classList.replace('active', 'hidden');
+    document.getElementById('login-screen').classList.replace('hidden', 'active');
+}, 2500);
+
+function selectAvatar(element) {
+    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+    element.classList.add('selected');
+    userData.avatarUrl = element.src;
+}
+
+function goToRoom() {
+    const nameInput = document.getElementById('usernameInput').value.trim();
+    if(nameInput === "") { alert("Please enter a nickname! ⚡"); return; }
+    
+    userData.name = nameInput;
+    document.getElementById('previewAvatar').src = userData.avatarUrl;
+    document.getElementById('previewName').innerText = userData.name;
+
+    document.getElementById('login-screen').classList.replace('active', 'hidden');
+    document.getElementById('room-screen').classList.replace('hidden', 'active');
+}
+
+// --- Step 3: Room System (UPDATED FOR SOCKET.IO) ---
+function enterChat(action) {
+    if(action === 'join') {
+        const code = document.getElementById('roomCodeInput').value.trim();
+        if(code.length < 4) { alert("Enter a valid 4-digit code! 🔒"); return; }
+        userData.roomCode = code;
+    } else if(action === 'create') {
+        userData.roomCode = Math.floor(1000 + Math.random() * 9000).toString();
+    }
+
+    // Backend ko batao ki main room join kar raha hu
+    socket.emit('join_chat_room', {
+        name: userData.name,
+        roomCode: userData.roomCode
+    });
+
+    // Chat UI setup karo
+    document.getElementById('currentRoomDisplay').innerText = `Room: ${userData.roomCode}`;
+    document.getElementById('myChatName').innerText = `${userData.name} (You)`;
+    document.getElementById('myChatAvatar').src = userData.avatarUrl;
+
+    document.getElementById('room-screen').classList.replace('active', 'hidden');
+    document.getElementById('chat-screen').classList.replace('hidden', 'active');
+}
+
+// --- Step 4: Real-time Message Sending&Receiving ---
+document.getElementById("messageInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") { sendMessage(); }
+});
+
+function sendMessage() {
+    const input = document.getElementById("messageInput");
+    const message = input.value.trim();
+    
+    if(message !== "") {
+        const now = new Date();
+        const time = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        // Server ko message bhejo data ke sath
+        socket.emit('send_message', {
+            text: message,
+            name: userData.name,
+            avatarUrl: userData.avatarUrl,
+            roomCode: userData.roomCode,
+            time: time,
+            socketId: socket.id // Pehchan ke liye
+        });
+        
+        input.value = ""; // Input clear karo
+    }
+}
+
+// Server se aane wale naye messages suno
+// Server se aane wale naye messages suno
+socket.on('receive_message', function(data) {
+    const chatBox = document.getElementById("chatBox");
+    const isMe = data.socketId === socket.id; 
+    
+    // NAYA LOGIC: Agar message me Link hai, toh use clickable <a> tag bana do
+    let formattedText = data.text;
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    if(formattedText.match(urlRegex)) {
+        formattedText = formattedText.replace(urlRegex, function(url) {
+            return `<a href="${url}" target="_blank" style="color: #00ff88; font-weight: 600; text-decoration: underline; text-underline-offset: 3px;">🔗 Open File</a>`;
+        });
+    }
+
+    let messageHTML = '';
+
+    if (isMe) {
+        messageHTML = `
+            <div class="message sent">
+                <div class="bubble">${formattedText}</div>
+                <span class="time">${data.time}</span>
+            </div>
+        `;
+    } else {
+        messageHTML = `
+            <div class="message received" style="display: flex; flex-direction: column; align-items: flex-start; max-width: 80%;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                    <img src="${data.avatarUrl}" style="width: 24px; height: 24px; border-radius: 8px;">
+                    <span style="font-size: 11px; color: rgba(255,255,255,0.5);">${data.name}</span>
+                </div>
+                <div class="bubble">${formattedText}</div>
+                <span class="time">${data.time}</span>
+            </div>
+        `;
+    }
+    
+    chatBox.insertAdjacentHTML("beforeend", messageHTML);
+    chatBox.scrollTop = chatBox.scrollHeight;
+});
+
+
+// System messages (Join/Leave alerts)
+socket.on('system_message', function(data) {
+    const chatBox = document.getElementById("chatBox");
+    const sysHTML = `<div class="system-msg">${data.msg}</div>`;
+    chatBox.insertAdjacentHTML("beforeend", sysHTML);
+    chatBox.scrollTop = chatBox.scrollHeight;
+});
+// --- Step 5: Update Sidebar Users List dynamically ---
+socket.on('update_user_list', function(users) {
+    const chatList = document.querySelector('.chat-list');
+    
+    // Purani list clear karo aur bas heading rakho
+    chatList.innerHTML = '<h4 class="sidebar-heading">Online in Room</h4>';
+    
+    // Har user ke liye ek naya item banao
+    users.forEach(user => {
+        // Check karo ki ye user main khud hu ya koi aur
+        const isMe = user.id === socket.id;
+        const displayName = isMe ? `${user.name} (You)` : user.name;
+        const activeClass = isMe ? 'active' : ''; // Khud ke naam ko highlight karo
+
+        const userHTML = `
+            <div class="chat-item ${activeClass}">
+                <div class="avatar-wrapper">
+                    <img src="${user.avatarUrl}" class="avatar">
+                    <span class="status-ring"></span>
+                </div>
+                <div class="chat-info">
+                    <h3>${displayName}</h3>
+                    <p>Online</p>
+                </div>
+            </div>
+        `;
+        
+        // Sidebar mein add kar do
+        chatList.insertAdjacentHTML('beforeend', userHTML);
+    });
+});
+// --- Step 6: Vayu Drop Integration ---
+function openVayuDrop() {
+    // Yahan apna Vayu Drop ka URL daalein
+    const vayuDropUrl = "https://your-vayu-drop-link.com"; // ya "http://localhost:5001"
+    
+    // Naye tab mein open karne ke liye
+    window.open(vayuDropUrl, '_blank');
+}
+
+</script>
+</body>
+</html>
